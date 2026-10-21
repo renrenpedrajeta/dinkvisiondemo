@@ -246,30 +246,28 @@
       @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
     }
 
-    /* Reflow the presentation on portrait tablets and phones instead of
-       shrinking the 1600px canvas until its content becomes unreadable. */
-    @media screen and (max-width: 900px),
-           screen and (orientation: portrait) and (max-width: 1200px) {
+    /* Screen layouts use real viewport dimensions in both viewing modes.
+       The fixed presentation canvas is retained only for printing. */
+    @media screen {
       html, body { height: 100%; height: 100dvh; overflow: hidden; }
-      .stage { display: block; background: var(--paper); }
+      .stage { display: block; bottom: calc(80px + env(safe-area-inset-bottom)); background: var(--paper); }
       .deck {
         width: 100%;
         height: 100%;
-        height: 100dvh;
-        transform: none !important;
+        transform: none;
         box-shadow: none;
       }
       .slide {
         overflow-x: hidden;
         overflow-y: auto;
         overscroll-behavior: contain;
-        touch-action: pan-y;
+        touch-action: pan-y pinch-zoom;
         -webkit-overflow-scrolling: touch;
       }
       .slide-inner {
         height: auto;
         min-height: 100%;
-        padding: 76px clamp(24px, 6vw, 64px) 112px;
+        padding: 76px clamp(24px, 6vw, 64px) 40px;
       }
       .slide-inner.with-brand { padding-top: 94px; }
       .brand { top: 28px; left: clamp(24px, 6vw, 64px); right: 24px; }
@@ -301,7 +299,7 @@
       .product-copy .body { max-width: none; font-size: clamp(18px, 2.8vw, 22px); }
 
       .intro-divider { min-height: 100%; padding: 32px; text-align: center; }
-      .intro-divider-text { font-size: clamp(50px, 12vw, 88px); }
+      .intro-divider-text { max-width: 100%; overflow-wrap: anywhere; font-size: clamp(32px, 7vw, 88px); }
 
       .team-layout { gap: 28px; }
       .person { padding: 28px; }
@@ -357,7 +355,7 @@
     }
 
     @media screen and (max-width: 600px) {
-      .slide-inner { padding: 68px 20px 104px; }
+      .slide-inner { padding: 68px 20px 32px; }
       .slide-inner.with-brand { padding-top: 82px; }
       .brand { top: 22px; left: 20px; right: 20px; }
       .brand-context { font-size: 8px; letter-spacing: .2em; }
@@ -383,7 +381,7 @@
       .device-placeholder:first-child { transform: none; }
 
       .gallery { grid-template-rows: 250px 76px; }
-      .thumbs { grid-template-columns: repeat(5, minmax(64px, 1fr)); overflow-x: auto; }
+      .thumbs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
       .support-list { grid-template-columns: 1fr; }
       .support-figure { height: 320px; }
@@ -394,6 +392,58 @@
       .closing-logo { width: min(100%, 260px); }
       .contact-placeholder { padding: 24px 20px; }
       .counter { min-width: 60px; }
+    }
+
+    @media screen {
+      .slide-inner { max-width: 1800px; margin-inline: auto; }
+      .slide-inner *, .intro-divider-text { min-width: 0; }
+      h1, h2, h3, p, a, strong, span { overflow-wrap: anywhere; }
+      .person-head { flex-wrap: wrap; }
+      .role p { font-size: 15px; line-height: 1.5; }
+      .product-image { height: auto; aspect-ratio: 2 / 1; }
+      .product-image img, .media-shot img, .hero-shot img, .thumb img {
+        display: block; max-width: 100%; object-fit: contain;
+      }
+      .media-grid > .media-shot, .media-stack .media-shot {
+        height: auto; min-height: 0; aspect-ratio: 2 / 1;
+      }
+      .media-stack { align-content: start; }
+      .gallery { grid-template-rows: auto auto; }
+      .hero-shot { aspect-ratio: 2 / 1; }
+      .thumbs { gap: 12px; }
+      .thumb { aspect-ratio: 2 / 1; }
+      .device-placeholder:first-child { transform: none; }
+      .support-figure {
+        height: auto; padding: 28px; display: grid; gap: 20px;
+      }
+      .support-figure strong, .support-figure span, .support-figure small {
+        position: static; max-width: 100%;
+      }
+      .support-figure strong { font-size: clamp(96px, 12vw, 170px); }
+      .support-figure span { font-size: clamp(23px, 2.5vw, 32px); }
+      .closing::before { display: none; }
+      .closing { background: radial-gradient(ellipse at bottom left, #243454, var(--night) 65%); }
+      .closing-logo-wrap { max-width: 100%; }
+      .closing-logo { max-width: 100%; }
+      .closing h2 { font-size: clamp(40px, 5vw, 80px); }
+      .controls button { width: 44px; height: 44px; }
+    }
+
+    /* Two columns only when each panel has enough room for readable content. */
+    @media screen and (min-width: 1100px) {
+      .product-intro, .team-layout, .strengths, .devices, .wrenque-layout,
+      .support, .closing .slide-inner {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: clamp(28px, 4vw, 64px);
+      }
+      .product-intro, .strengths, .devices, .wrenque-layout, .support {
+        min-height: calc(100dvh - 214px - env(safe-area-inset-bottom));
+      }
+      .media-head { grid-template-columns: 1.2fr 1fr; gap: 32px; }
+      .media-grid { grid-template-columns: 1.18fr .82fr; align-items: start; }
+      .definition-copy h2 { font-size: clamp(48px, 5vw, 78px); }
+      .person { padding: clamp(20px, 2.5vw, 34px); }
+      .role { grid-template-columns: 96px minmax(0, 1fr); }
     }
 
     @page { size: 16.667in 9.375in; margin: 0; }
@@ -628,21 +678,11 @@
     const progress = document.getElementById("progress");
     let current = Math.max(0, Math.min(slides.length - 1, Number(location.hash.slice(1)) - 1 || 0));
 
-    function fitDeck() {
+    function syncFullscreenButton() {
       const isFullscreen = Boolean(document.fullscreenElement);
       const fullscreenButton = document.getElementById("full");
       fullscreenButton.setAttribute("aria-pressed", String(isFullscreen));
       fullscreenButton.setAttribute("aria-label", isFullscreen ? "Exit full screen" : "Enter full screen");
-      const shouldReflow = window.matchMedia("(max-width: 900px), (orientation: portrait) and (max-width: 1200px)").matches;
-      if (shouldReflow) {
-        deck.style.transform = "none";
-        return;
-      }
-      const scaleX = window.innerWidth / 1600;
-      const scaleY = window.innerHeight / 900;
-      // Fullscreen fills the screen, including displays that are not 16:9.
-      const scale = Math.min(scaleX, scaleY);
-      deck.style.transform = isFullscreen ? `scale(${scaleX}, ${scaleY})` : `scale(${scale})`;
     }
 
     function show(index, updateHash = true) {
@@ -676,6 +716,7 @@
     });
     let touchStart = null;
     document.addEventListener("touchstart", event => {
+      if (event.touches.length !== 1) { touchStart = null; return; }
       const touch = event.changedTouches[0];
       touchStart = { x: touch.clientX, y: touch.clientY };
     }, { passive: true });
@@ -689,10 +730,10 @@
       }
       touchStart = null;
     }, { passive: true });
-    window.addEventListener("resize", fitDeck);
-    document.addEventListener("fullscreenchange", fitDeck);
+    document.addEventListener("touchcancel", () => { touchStart = null; }, { passive: true });
+    document.addEventListener("fullscreenchange", syncFullscreenButton);
     window.addEventListener("hashchange", () => show(Number(location.hash.slice(1)) - 1 || 0, false));
-    fitDeck();
+    syncFullscreenButton();
     show(current, false);
   </script>
 </body>
