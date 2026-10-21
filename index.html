@@ -246,6 +246,156 @@
       @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
     }
 
+    /* Reflow the presentation on portrait tablets and phones instead of
+       shrinking the 1600px canvas until its content becomes unreadable. */
+    @media screen and (max-width: 900px),
+           screen and (orientation: portrait) and (max-width: 1200px) {
+      html, body { height: 100%; height: 100dvh; overflow: hidden; }
+      .stage { display: block; background: var(--paper); }
+      .deck {
+        width: 100%;
+        height: 100%;
+        height: 100dvh;
+        transform: none !important;
+        box-shadow: none;
+      }
+      .slide {
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        touch-action: pan-y;
+        -webkit-overflow-scrolling: touch;
+      }
+      .slide-inner {
+        height: auto;
+        min-height: 100%;
+        padding: 76px clamp(24px, 6vw, 64px) 112px;
+      }
+      .slide-inner.with-brand { padding-top: 94px; }
+      .brand { top: 28px; left: clamp(24px, 6vw, 64px); right: 24px; }
+      .brand-context { font-size: 10px; }
+      .page { display: none; }
+
+      h1 { font-size: clamp(52px, 11vw, 82px); }
+      h2 { font-size: clamp(38px, 7vw, 56px); }
+      h3 { font-size: clamp(21px, 4vw, 26px); }
+      .lead { font-size: clamp(19px, 3.2vw, 24px); }
+      .body { font-size: clamp(17px, 2.6vw, 20px); }
+
+      .product-intro,
+      .team-layout,
+      .strengths,
+      .media-head,
+      .media-grid,
+      .devices,
+      .wrenque-layout,
+      .support,
+      .closing .slide-inner {
+        grid-template-columns: minmax(0, 1fr);
+        height: auto;
+      }
+
+      .product-intro { gap: 34px; }
+      .product-image { height: clamp(240px, 42vh, 430px); }
+      .product-logo { width: min(100%, 520px); margin-bottom: 20px; }
+      .product-copy .body { max-width: none; font-size: clamp(18px, 2.8vw, 22px); }
+
+      .intro-divider { min-height: 100%; padding: 32px; text-align: center; }
+      .intro-divider-text { font-size: clamp(50px, 12vw, 88px); }
+
+      .team-layout { gap: 28px; }
+      .person { padding: 28px; }
+      .person h3 { font-size: clamp(25px, 4.5vw, 30px); }
+
+      .definition-copy h2 { font-size: clamp(48px, 9vw, 78px); }
+      .definition-lead { font-size: clamp(23px, 4vw, 30px); }
+      .definition-detail { font-size: clamp(18px, 3vw, 21px); }
+
+      .strengths { gap: 42px; }
+      .strength { grid-template-columns: 54px 1fr; gap: 18px; padding: 24px 0; }
+      .strength-letter { font-size: 34px; }
+
+      .media-head { gap: 10px; margin-bottom: 28px; }
+      .media-head .lead { font-size: clamp(18px, 3vw, 21px); }
+      .media-grid { gap: 20px; }
+      .media-shot { min-height: 220px; }
+      .media-grid > .media-shot { height: clamp(240px, 42vh, 410px); }
+      .media-stack { grid-template-rows: auto auto; gap: 20px; }
+      .media-stack .media-shot { height: clamp(220px, 36vh, 340px); }
+      .empty-media { min-height: 150px; }
+
+      .package-heading .package-title { font-size: clamp(46px, 10vw, 78px); }
+
+      .devices { gap: 42px; }
+      .device-frames { height: auto; min-height: 360px; }
+      .device-placeholder { min-height: 320px; padding: 24px; }
+      .device-placeholder:first-child { transform: translateY(22px); }
+
+      .wrenque-layout { gap: 38px; }
+      .wrenque-copy h2 { font-size: clamp(46px, 8vw, 64px); }
+      .wrenque-copy .body { font-size: clamp(16px, 2.5vw, 19px); }
+      .gallery { grid-template-rows: clamp(250px, 43vh, 410px) clamp(68px, 11vh, 100px); }
+
+      .support { gap: 34px; }
+      .support-list { gap: 12px 22px; }
+      .support-figure { height: 350px; }
+      .support-figure strong { left: 54px; top: 58px; font-size: 160px; }
+      .support-figure span { left: 62px; top: 218px; font-size: 28px; }
+      .support-figure small { left: 64px; top: 270px; max-width: calc(100% - 88px); }
+
+      .closing .slide-inner { gap: 38px; align-content: center; }
+      .closing h2 { font-size: clamp(54px, 10vw, 82px); }
+      .contact-placeholder { justify-self: stretch; width: 100%; padding: 30px; }
+
+      .controls {
+        bottom: calc(12px + env(safe-area-inset-bottom));
+        padding: 6px 8px;
+      }
+      .controls button { width: 42px; height: 42px; }
+      .hint { display: none; }
+      .progress { height: 3px; }
+    }
+
+    @media screen and (max-width: 600px) {
+      .slide-inner { padding: 68px 20px 104px; }
+      .slide-inner.with-brand { padding-top: 82px; }
+      .brand { top: 22px; left: 20px; right: 20px; }
+      .brand-context { font-size: 8px; letter-spacing: .2em; }
+
+      .product-image { height: 230px; }
+      .product-intro { gap: 26px; }
+      .product-copy .body { font-size: 17px; }
+
+      .person { padding: 22px 20px; }
+      .person-head { align-items: flex-start; flex-direction: column; gap: 8px; }
+      .role { grid-template-columns: 1fr; gap: 5px; }
+      .role time { color: var(--violet); }
+
+      .definition-copy h2 { margin-bottom: 24px; }
+      .definition-detail { margin-top: 22px; }
+      .strengths { gap: 28px; }
+
+      .media-grid > .media-shot { height: 230px; }
+      .media-stack .media-shot { height: 220px; }
+
+      .device-frames { grid-template-columns: 1fr; gap: 18px; min-height: 0; }
+      .device-placeholder { min-height: 230px; }
+      .device-placeholder:first-child { transform: none; }
+
+      .gallery { grid-template-rows: 250px 76px; }
+      .thumbs { grid-template-columns: repeat(5, minmax(64px, 1fr)); overflow-x: auto; }
+
+      .support-list { grid-template-columns: 1fr; }
+      .support-figure { height: 320px; }
+      .support-figure strong { left: 34px; }
+      .support-figure span { left: 40px; font-size: 24px; }
+      .support-figure small { left: 42px; max-width: calc(100% - 62px); font-size: 16px; }
+
+      .closing-logo { width: min(100%, 260px); }
+      .contact-placeholder { padding: 24px 20px; }
+      .counter { min-width: 60px; }
+    }
+
     @page { size: 16.667in 9.375in; margin: 0; }
     @media print {
       html, body { width: auto; height: auto; overflow: visible; background: white; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
@@ -479,6 +629,11 @@
     let current = Math.max(0, Math.min(slides.length - 1, Number(location.hash.slice(1)) - 1 || 0));
 
     function fitDeck() {
+      const shouldReflow = window.matchMedia("(max-width: 900px), (orientation: portrait) and (max-width: 1200px)").matches;
+      if (shouldReflow) {
+        deck.style.transform = "none";
+        return;
+      }
       const scale = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
       deck.style.transform = `scale(${scale})`;
     }
@@ -511,11 +666,18 @@
       if (event.key.toLowerCase() === "f") toggleFullscreen();
     });
     let touchStart = null;
-    document.addEventListener("touchstart", event => { touchStart = event.changedTouches[0].clientX; }, { passive: true });
+    document.addEventListener("touchstart", event => {
+      const touch = event.changedTouches[0];
+      touchStart = { x: touch.clientX, y: touch.clientY };
+    }, { passive: true });
     document.addEventListener("touchend", event => {
       if (touchStart === null) return;
-      const delta = event.changedTouches[0].clientX - touchStart;
-      if (Math.abs(delta) > 60) show(current + (delta < 0 ? 1 : -1));
+      const touch = event.changedTouches[0];
+      const deltaX = touch.clientX - touchStart.x;
+      const deltaY = touch.clientY - touchStart.y;
+      if (Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.25) {
+        show(current + (deltaX < 0 ? 1 : -1));
+      }
       touchStart = null;
     }, { passive: true });
     window.addEventListener("resize", fitDeck);
